@@ -3,8 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const VideoPlayer = () => {
+  const backendUrl = `${process.env.EXPO_PUBLIC_BACKEND_URL}/live/video`;
   return (
-    <img src="http://localhost:3000/live/video" alt="Live Stream" style={styles.webview}/>
+    <img src={backendUrl} alt="Live Stream" style={styles.webview} />
   );
 };
 

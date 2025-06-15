@@ -37,7 +37,7 @@ export default function Login() {
       const idToken = response.credential;
       AsyncStorage.setItem('access_token', idToken);
       try {
-        const res = await fetch('http://localhost:3000/api/auth/login/google', {
+        const res = await fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/auth/login/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id_token: idToken }),
@@ -67,7 +67,7 @@ export default function Login() {
       redirectUri,
       scopes: ['openid', 'profile', 'email'],
       responseType: 'id_token',
-      usePKCE: false // Explicitly disable PKCE to avoid sending code_challenge_method
+      usePKCE: false
     },
     discovery
   );

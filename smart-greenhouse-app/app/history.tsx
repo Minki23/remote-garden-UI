@@ -77,7 +77,7 @@ const History = () => {
     (async () => {
       try {
         const token = await AsyncStorage.getItem('access_token');
-        const wsUrl = `ws://localhost:3000/ws/wsinit?Authorization=Bearer ${token}`;
+        const wsUrl = `ws://${process.env.EXPO_PUBLIC_BACKEND_URL}/ws/wsinit?Authorization=Bearer ${token}`;
         console.log('Connecting to WebSocket:', wsUrl);
         const socket = new WebSocket(wsUrl);
         setWs(socket);
@@ -224,7 +224,7 @@ const History = () => {
       setError(null);
       const token = await AsyncStorage.getItem('access_token');
       
-      const response = await fetch('http://localhost:3000/api/gardens/', {
+      const response = await fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/gardens/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -255,7 +255,7 @@ const History = () => {
       setError(null);
       const token = await AsyncStorage.getItem('access_token');
       
-      const devicesResponse = await fetch(`http://localhost:3000/api/devices/${gardenId}`, {
+      const devicesResponse = await fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/${gardenId}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -279,7 +279,7 @@ const History = () => {
       const updatedDevices = await Promise.all(
         devices.map(async (device) => {
           try {
-            const readingsResponse = await fetch(`http://localhost:3000/api/readings/device/${device.id}`, {
+            const readingsResponse = await fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/readings/device/${device.id}`, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

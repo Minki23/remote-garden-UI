@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Sidebar } from './components/Sidebar';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-const API_BASE = 'http://localhost:3000/api/schedules';
+const API_BASE = `http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/schedules`;
 
 const Scheduling = () => {
   const [schedules, setSchedules] = useState<any[]>([]);

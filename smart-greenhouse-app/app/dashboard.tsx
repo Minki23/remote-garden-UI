@@ -28,7 +28,7 @@ export default function Dashboard() {
   useEffect(() => {
     (async () => {
       const token = await AsyncStorage.getItem('access_token');
-      const wsUrl = `ws://localhost:3000/ws/wsinit?Authorization=Bearer ${token}`;
+      const wsUrl = `ws://${process.env.EXPO_PUBLIC_BACKEND_URL}/ws/wsinit?Authorization=Bearer ${token}`;
       console.log('Connecting to WebSocket:', wsUrl);
       const socket = new WebSocket(wsUrl);
       setWs(socket);

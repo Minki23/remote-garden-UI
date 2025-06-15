@@ -27,7 +27,7 @@ const CameraFeed = () => {
       )}
 
       <Image
-        source={{ uri: 'http://localhost:3000/live/video' }}
+        source={{ uri: `http://${process.env.EXPO_PUBLIC_BACKEND_URL}/live/video` }}
         style={[styles.image, { opacity: (isLoading && isFirstLoad) ? 0 : 1 }]}
         resizeMode="contain"
         onLoadStart={handleLoadStart}
