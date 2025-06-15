@@ -10,14 +10,16 @@
     "newArchEnabled": true,
     "entryPoint": "node_modules/expo-router/entry",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.smartgreenhouseapp"
     },
     "web": {
       "bundler": "metro",
@@ -34,10 +36,22 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.12068635644-6qnjc47pg2944ohf1uo3osgjtgbbljuk.apps.googleusercontent.com"
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "327d86b7-1233-41c7-97e9-a44b2e2a1add"
+      }
     }
   }
 }

@@ -4,14 +4,14 @@ import { Dimensions } from 'react-native';
 
 const screenWidth = Dimensions.get('window').width;
 
-const TemperatureChart = ({ chartWidth }: { chartWidth: number }) => {
+const TemperatureChart = ({ chartWidth, tempChartData }: { chartWidth: number, tempChartData: any[] }) => {
   return (
     <LineChart
       data={{
-        labels: ['1h', '2h', '3h', '4h', '5h', '6h', '7h', '8h', '9h', '10h', '11h', '12h'],
+        labels: tempChartData.map((item) => item.timestamp),
         datasets: [
           {
-            data: [22, 23, 24, 25, 24, 23, 22, 21, 22, 23, 24, 25],
+            data: tempChartData.map(item => item.value),
           },
         ],
       }}

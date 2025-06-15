@@ -9,6 +9,9 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import * as AuthSession from 'expo-auth-session';
+import {
+  GoogleSigninButton,
+} from '@react-native-google-signin/google-signin';
 
 const discovery = {
   authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
@@ -30,7 +33,7 @@ export default function Login() {
 
   async function handleCredentialResponse(response: CredentialResponse): Promise<void> {
       const idToken = response.credential;
-      console.log('Google ID Token:', idToken);
+      AsyncStorage.setItem('access_token', idToken);
       try {
         const res = await fetch('http://localhost:3000/api/auth/login/google', {
           method: 'POST',
@@ -93,7 +96,7 @@ export default function Login() {
   }, [response]);
 
   const handleMobileLogin = () => {
-    router.push('/dashboard'); // Redirect directly to the dashboard on mobile
+    router.push('/dashboard');
   };
 
   useEffect(() => {
@@ -119,7 +122,6 @@ export default function Login() {
         googleButtonContainer.style.display = 'flex';
         googleButtonContainer.style.justifyContent = 'center';
         googleButtonContainer.style.alignItems = 'center';
-        googleButtonContainer.style.backgroundColor = '#f0f0f0';
         googleButtonContainer.style.padding = '10px';
         googleButtonContainer.style.borderRadius = '5px';
         googleButtonContainer.style.marginBottom = '10px';
@@ -149,26 +151,23 @@ export default function Login() {
         <View style={styles.whiteContainer}>
           <Text style={styles.title}>Smart Greenhouse</Text>
           <Text style={styles.subtitle}>Sign in to your account</Text>
-          <Text style={styles.description}>Welcome back! Please choose SSO option..</Text>
+          <Text style={styles.description}>Welcome back!</Text>
 
           {Platform.OS === 'web' ? (
             <div id="google-signin-button" style={{ marginBottom: 10, width: '90%' }}></div>
           ) : (
-            <TouchableOpacity style={styles.ssoButton} onPress={handleMobileLogin}>
-              <FontAwesome name="google" size={20} color="black" style={styles.icon} />
-              <Text style={styles.ssoText}>Continue with Google</Text>
-            </TouchableOpacity>
+           <TouchableOpacity onPress={handleMobileLogin} style={styles.ssoButton}>
+             <GoogleSigninButton
+               style={{ width: '100%', height: 48 }}
+               size={GoogleSigninButton.Size.Wide}
+               color={GoogleSigninButton.Color.Light}
+               onPress={() => {
+                 promptAsync();
+               }}
+             />
+           </TouchableOpacity>
+
           )}
-
-          <TouchableOpacity style={styles.ssoButton}>
-            <FontAwesome name="apple" size={20} color="black" style={styles.icon} />
-            <Text style={styles.ssoText}>Continue with Apple</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.ssoButton}>
-            <FontAwesome name="windows" size={20} color="black" style={styles.icon} />
-            <Text style={styles.ssoText}>Continue with Microsoft</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -218,7 +217,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 10,
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
     width: '80%',
   },
   title: {
@@ -232,7 +230,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: 'gray',
     marginBottom: 20,
   },
   ssoButton: {
@@ -245,8 +242,6 @@ const styles = StyleSheet.create({
     width: '90%',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#d9d9d9',
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
   },
   ssoText: {
     marginLeft: 10,

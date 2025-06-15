@@ -1,38 +1,46 @@
 import React from 'react';
-import { View, Text, Platform } from 'react-native';
+import { View, Text, Platform, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const CameraFeed = () => {
   return (
     Platform.OS === 'web' ? (
       <View style={{
-        height: 300,
+        height: '80%',
         backgroundColor: '#f0f8ff',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#ddd',
-        marginBottom: 8,
-        width: '100%',
+        marginBottom: '2%',
+        width: '72%',
+        maxWidth: 600,
+        overflow: 'hidden',
       }}>
-        <MaterialIcons name="videocam" size={100} color="#e0e0e0" />
-        <Text style={{ marginTop: 10, fontSize: 16, color: '#555' }}>Camera feed placeholder</Text>
+        <Image
+          source={{ uri: 'http://localhost:3000/live/video' }}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="contain"
+        />
       </View>
-    ) : (
-      <View style={{
-        height: 300,
-        backgroundColor: '#f0f8ff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        borderWidth: 1,
-        paddingBottom: 10,
+  ) : (
+    <View style={{
+      height: 300,
+      backgroundColor: '#f0f8ff',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+      borderWidth: 1,
+      paddingBottom: 10,
         borderColor: '#ddd',
         width: '100%',
       }}>
-        <MaterialIcons name="videocam" size={100} color="#e0e0e0" />
-        <Text style={{ marginTop: 10, fontSize: 16, color: '#555' }}>Camera feed placeholder</Text>
+       <Image
+          source={{ uri: 'http://localhost:3000/live/video' }}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="contain"
+        />
       </View>
     )
   );

@@ -2,14 +2,14 @@ import React from 'react';
 import { BarChart } from 'react-native-chart-kit';
 import { Platform } from 'react-native';
 
-const HumidityChart = ({ chartWidth }: { chartWidth: number }) => {
+const HumidityChart = ({ chartWidth, humidityChartData }: { chartWidth: number, humidityChartData: any[] }) => {
   return (
     <BarChart
       data={{
-        labels: ['1h', '3h', '5h', '7h', '9h', '11h'],
+        labels: humidityChartData.map(item => item.timestamp),
         datasets: [
           {
-            data: [60, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72],
+            data: humidityChartData.map(item => item.value),
           },
         ],
       }}

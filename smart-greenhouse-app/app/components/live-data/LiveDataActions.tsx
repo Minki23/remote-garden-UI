@@ -1,37 +1,84 @@
-import React from 'react';
+import React, { use, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const LiveDataActions = () => {
+
+const [lightSystem, setLightSystem] = React.useState(false);
+const [growHeater, setGrowHeater] = React.useState(0.5);
+const [roofOpen, setRoof] = React.useState(false);
+
   return (
     <View style={styles.container}>
       <View style={styles.actionCard}>
-        <Text style={styles.actionTitle}>Watering System</Text>
-        <Text style={styles.actionDescription}>Manually toggle the watering system.</Text>
-        <TouchableOpacity style={styles.actionButton}>
-          <MaterialIcons name="play-arrow" size={24} color="#007BFF" />
+        <Text style={styles.actionTitle}>Light System</Text>
+        <Text style={styles.actionDescription}>Manually toggle the light system.</Text>
+        <TouchableOpacity style={styles.actionButton} onPress={() => {
+          setLightSystem(!lightSystem);
+          if (!lightSystem) {
+            fetch('http://localhost:3000/api/devices/1/light/off', {
+              method: 'POST'
+            }).catch(console.error);
+          }
+          else {
+            fetch('http://localhost:3000/api/devices/1/light/on', {
+              method: 'POST'
+            }).catch(console.error);
+          }
+        }}>
+          {lightSystem ? (
+            <MaterialIcons name="pause" size={24} color="#007BFF" />
+          ) : (
+            <MaterialIcons name="play-arrow" size={24} color="#007BFF" />
+          )}
         </TouchableOpacity>
       </View>
 
       <View style={styles.actionCard}>
-        <Text style={styles.actionTitle}>Grow Lights</Text>
-        <Text style={styles.actionDescription}>Adjust the intensity of the grow lights.</Text>
+        <Text style={styles.actionTitle}>Heating</Text>
+        <Text style={styles.actionDescription}>Adjust the intensity of the heating system.</Text>
         <Slider
           style={styles.slider}
           minimumValue={0}
-          maximumValue={100}
+          maximumValue={1}
           minimumTrackTintColor="#007BFF"
           maximumTrackTintColor="#ddd"
+          onSlidingComplete={(value) => {
+            setGrowHeater(Number(value.toFixed(2)));
+            fetch('http://localhost:3000/api/devices/1/heater/increase', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ amount: value }),
+            }).catch(console.error);
+          }}
+          value={growHeater}
         />
-        <Text style={styles.sliderValue}>Level: 50%</Text>
+        <Text style={styles.sliderValue}>Level: {growHeater * 100}%</Text>
       </View>
 
       <View style={styles.actionCard}>
         <Text style={styles.actionTitle}>Ventilation Fan</Text>
-        <Text style={styles.actionDescription}>Control the greenhouse ventilation fan.</Text>
-        <TouchableOpacity style={styles.actionButton}>
-          <MaterialIcons name="play-arrow" size={24} color="#007BFF" />
+        <Text style={styles.actionDescription}>Control the greenhouse roof.</Text>
+        <TouchableOpacity style={styles.actionButton} onPress={() => {
+            setRoof(!roofOpen);
+            if (!roofOpen) {
+              fetch('http://localhost:3000/api/devices/1/roof/open', {
+                method: 'POST'
+              }).catch(console.error);
+            } else {
+              fetch('http://localhost:3000/api/devices/1/roof/close', {
+                method: 'POST'
+              }).catch(console.error);
+            }
+          }}>
+            {roofOpen ? (
+              <MaterialIcons name="pause" size={24} color="#007BFF" />
+            ) : (
+              <MaterialIcons name="play-arrow" size={24} color="#007BFF" />
+            )}
         </TouchableOpacity>
       </View>
     </View>

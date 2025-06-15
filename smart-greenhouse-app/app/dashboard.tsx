@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, useWindowDimensions, ScrollView, DrawerLayoutAndroid, Platform } from "react-native";
 import { Sidebar } from "./components/Sidebar";
 import TemperatureChart from './components/dashboard/TemperatureChart';
@@ -7,11 +7,85 @@ import CameraFeed from './components/dashboard/CameraFeed';
 import { Dimensions } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import MetricCard from './components/dashboard/MetricCard';
+import VideoPlayer from "./components/VideoPlayer";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function Dashboard() {
   const { width } = useWindowDimensions();
+  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [Temperature, setTemperature] = useState<number>(0);
+  const [Humidity, setHumidity] = useState<number>(0);
+  const [LightLevel, setLightLevel] = useState<number>(0);
+  const [temp_trend, setTempTrend] = useState<string>("stable");
+  const [humidity_trend, setHumidityTrend] = useState<string>("stable");
+  const [light_trend, setLightTrend] = useState<string>("stable");
+  const [SystemStatus, setSystemStatus] = useState<string>("Good");
+  const [tempChartData, setTempChartData] = useState<any[]>([]);
+  const [humidityChartData, setHumidityChartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem('access_token');
+      const wsUrl = `ws://localhost:3000/ws/wsinit?Authorization=Bearer ${token}`;
+      console.log('Connecting to WebSocket:', wsUrl);
+      const socket = new WebSocket(wsUrl);
+      setWs(socket);
+      socket.onopen = () => console.log('WebSocket connected');
+      socket.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        console.log('WebSocket message received:', data);
+        if (data.event === 'new_reading') {
+          if (data.device_type == "TEMPERATURE") {
+            if (data.value > Temperature) {
+              setTempTrend("Trend: up");
+            } else if (data.value < Temperature) {
+              setTempTrend("Trend: down");
+            } else {
+              setTempTrend("Trend: stable");
+            }
+            setTemperature(data.value);
+            setTempChartData(prev => {
+              const now = new Date();
+              const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+              const updated = [...prev, { timestamp, value: data.value }];
+              return updated.length > 10 ? updated.slice(updated.length - 10) : updated;
+            });
+          }
+          if (data.device_type == "SOIL_SENSOR") {
+            if (data.value > Humidity) {
+              setHumidityTrend("Trend: up");
+            } else if (data.value < Humidity) {
+              setHumidityTrend("Trend: down");
+            } else {
+              setHumidityTrend("Trend: stable");
+            }
+            setHumidity(data.value);
+            setHumidityChartData(prev => {
+              const now = new Date();
+              const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+              const updated = [...prev, { timestamp, value: data.value }];
+              return updated.length > 10 ? updated.slice(updated.length - 10) : updated;
+            });
+          }
+          if (data.device_type == "LIGHT") {
+            if (data.value > LightLevel) {
+              setLightTrend("Trend: up");
+            } else if (data.value < LightLevel) {
+              setLightTrend("Trend: down");
+            } else {
+              setLightTrend("Trend: stable");
+            }
+            setLightLevel(data.value);
+          }
+        }
+      };
+      socket.onclose = () => console.log('WebSocket closed');
+      socket.onerror = (e) => console.error('WebSocket error', e);
+    })();
+  }, []);
+
   const isLargeScreen = width >= 768;
   const isWeb = Platform.OS !== 'android';
 
@@ -33,23 +107,23 @@ export default function Dashboard() {
         <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
           <View style={styles.row}>
             <View style={styles.row}>
-              <MetricCard title="Temperature" value="24°C" trend="Trend: stable" />
-              <MetricCard title="Humidity" value="62% RH" trend="Trend: down" />
+              <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
+              <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
             </View>
             <View style={styles.row}>
-              <MetricCard title="Light Level" value="5500 Lux" trend="Trend: up" />
-              <MetricCard title="System Status" value="Good" trend="Battery: 98%" />
+              <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
+              <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
             </View>
             <View style={styles.section}>
               <CameraFeed />
             </View> 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Temperature Trend (12h)</Text>
-              <TemperatureChart chartWidth={chartWidth} />
+              <Text style={styles.sectionTitle}>Temperature Trend</Text>
+              <TemperatureChart chartWidth={chartWidth} tempChartData={tempChartData} />
             </View>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Humidity Trend (12h)</Text>
-              <HumidityChart chartWidth={chartWidth} />
+              <Text style={styles.sectionTitle}>Humidity Trend</Text>
+              <HumidityChart chartWidth={chartWidth} humidityChartData={humidityChartData} />
             </View>
           </View>
         </ScrollView>
@@ -64,12 +138,12 @@ export default function Dashboard() {
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <View style={styles.row}>
             <View style={styles.metricColumn}>
-              <MetricCard title="Temperature" value="24°C" trend="Trend: stable" />
-              <MetricCard title="Humidity" value="62% RH" trend="Trend: down" />
+              <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
+              <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
               </View>
             <View style={styles.metricColumn}>
-              <MetricCard title="Light Level" value="5500 Lux" trend="Trend: up" />
-              <MetricCard title="System Status" value="Good" trend="Battery: 98%" />
+               <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
+                <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
             </View>
             <View style={styles.cameraColumn}>
               <Text style={styles.sectionTitle}><MaterialIcons name="camera-alt" size={20} color="#007BFF" /> Live Camera Feed</Text>
@@ -78,13 +152,13 @@ export default function Dashboard() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Temperature Trend (12h)</Text>
-            <TemperatureChart chartWidth={chartWidth} />
+            <Text style={styles.sectionTitle}>Temperature Trend</Text>
+            <TemperatureChart chartWidth={chartWidth} tempChartData={tempChartData} />
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Humidity Trend (12h)</Text>
-            <HumidityChart chartWidth={chartWidth} />
+            <Text style={styles.sectionTitle}>Humidity Trend</Text>
+            <HumidityChart chartWidth={chartWidth} humidityChartData={humidityChartData} />
           </View>
         </ScrollView>
       </View>
