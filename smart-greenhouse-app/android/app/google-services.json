@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "163418974987",
+    "project_id": "remote-garden-b236a",
+    "storage_bucket": "remote-garden-b236a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163418974987:android:b551dc6c5993286dfa900e",
+        "android_client_info": {
+          "package_name": "com.anonymous.smartgreenhouseapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZRKIRhYb_OgSrAuM0kbjtjCUMSCht24o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

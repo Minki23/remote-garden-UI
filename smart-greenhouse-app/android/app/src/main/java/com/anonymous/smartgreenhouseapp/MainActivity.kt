@@ -1,4 +1,4 @@
-package com.anonymous.smartgreenhouseapp
+package com.minki.smartgreenhouseapp
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

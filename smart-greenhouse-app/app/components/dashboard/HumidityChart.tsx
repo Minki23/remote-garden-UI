@@ -3,13 +3,20 @@ import { BarChart } from 'react-native-chart-kit';
 import { Platform } from 'react-native';
 
 const HumidityChart = ({ chartWidth, humidityChartData }: { chartWidth: number, humidityChartData: any[] }) => {
+  // Provide fallback data when chart is empty or has invalid data
+  const hasValidData = humidityChartData && humidityChartData.length > 0 && humidityChartData.some(item => !isNaN(item.value));
+  
+  const chartData = hasValidData ? humidityChartData : [
+    { timestamp: 'No data', value: 0 }
+  ];
+
   return (
     <BarChart
       data={{
-        labels: humidityChartData.map(item => item.timestamp),
+        labels: chartData.map(item => item.timestamp || 'No data'),
         datasets: [
           {
-            data: humidityChartData.map(item => item.value),
+            data: chartData.map(item => isNaN(item.value) ? 0 : item.value),
           },
         ],
       }}

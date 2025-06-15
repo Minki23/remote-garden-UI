@@ -3,12 +3,13 @@ declare global {
     google: any;
   }
 }
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, useWindowDimensions, Alert, Platform, Linking } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, useWindowDimensions, Alert, Platform, Linking, Button } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import * as AuthSession from 'expo-auth-session';
+import GoogleAuth from './components/GoogleAuth';
 import {
   GoogleSigninButton,
 } from '@react-native-google-signin/google-signin';
@@ -22,6 +23,7 @@ export default function Login() {
   const { width } = useWindowDimensions();
   const isLargeScreen = width >= 768;
   const router = useRouter();
+  const { user, loading, error, signIn, signOut } = GoogleAuth();
 
   interface CredentialResponse {
     credential: string;
@@ -75,28 +77,13 @@ export default function Login() {
       const idToken = response.params.id_token;
       console.log('Google ID Token:', idToken);
       (async () => {
-        const res = await fetch('http://localhost:3000/api/auth/login/google', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id_token: idToken }),
-        });
-
-        const responseText = await res.text();
-
-        if (res.ok) {
-          const data = JSON.parse(responseText);
-          await AsyncStorage.setItem('access_token', data.access_token);
-          Alert.alert('Login Successful', 'You have been logged in successfully!');
-          router.push('/dashboard');
-        } else {
-          Alert.alert('Login Failed', 'Server rejected the login attempt.');
-        }
+        
       })();
     }
   }, [response]);
 
   const handleMobileLogin = () => {
-    router.push('/dashboard');
+    
   };
 
   useEffect(() => {
@@ -157,14 +144,7 @@ export default function Login() {
             <div id="google-signin-button" style={{ marginBottom: 10, width: '90%' }}></div>
           ) : (
            <TouchableOpacity onPress={handleMobileLogin} style={styles.ssoButton}>
-             <GoogleSigninButton
-               style={{ width: '100%', height: 48 }}
-               size={GoogleSigninButton.Size.Wide}
-               color={GoogleSigninButton.Color.Light}
-               onPress={() => {
-                 promptAsync();
-               }}
-             />
+             <Button title="Google Sign-In" onPress={signIn} />
            </TouchableOpacity>
 
           )}

@@ -1,4 +1,4 @@
-package com.anonymous.smartgreenhouseapp
+package com.minki.smartgreenhouseapp
 
 import android.app.Application
 import android.content.res.Configuration

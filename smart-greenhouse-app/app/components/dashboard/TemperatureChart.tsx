@@ -5,13 +5,20 @@ import { Dimensions } from 'react-native';
 const screenWidth = Dimensions.get('window').width;
 
 const TemperatureChart = ({ chartWidth, tempChartData }: { chartWidth: number, tempChartData: any[] }) => {
+  // Provide fallback data when chart is empty or has invalid data
+  const hasValidData = tempChartData && tempChartData.length > 0 && tempChartData.some(item => !isNaN(item.value));
+  
+  const chartData = hasValidData ? tempChartData : [
+    { timestamp: 'No data', value: 0 }
+  ];
+
   return (
     <LineChart
       data={{
-        labels: tempChartData.map((item) => item.timestamp),
+        labels: chartData.map((item) => item.timestamp || 'No data'),
         datasets: [
           {
-            data: tempChartData.map(item => item.value),
+            data: chartData.map(item => isNaN(item.value) ? 0 : item.value),
           },
         ],
       }}

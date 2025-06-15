@@ -89,7 +89,7 @@ export default function Dashboard() {
   const isLargeScreen = width >= 768;
   const isWeb = Platform.OS !== 'android';
 
-  const chartWidth = isWeb ? 0.7 * screenWidth : 0.8 * screenWidth;
+  const chartWidth = isWeb ? 0.6 * screenWidth : 0.8 * screenWidth;
 
   if (Platform.OS === "android" && !isLargeScreen) {
     return (
@@ -106,11 +106,9 @@ export default function Dashboard() {
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
           <View style={styles.row}>
-            <View style={styles.row}>
+            <View style={styles.column}>
               <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
               <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
-            </View>
-            <View style={styles.row}>
               <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
               <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
             </View>
@@ -140,10 +138,8 @@ export default function Dashboard() {
             <View style={styles.metricColumn}>
               <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
               <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
-              </View>
-            <View style={styles.metricColumn}>
-               <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
-                <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
+              <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
+              <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
             </View>
             <View style={styles.cameraColumn}>
               <Text style={styles.sectionTitle}><MaterialIcons name="camera-alt" size={20} color="#007BFF" /> Live Camera Feed</Text>
@@ -182,8 +178,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     gap: 10,
+    width: '100%',
   },
   column: {
     flexDirection: "column",
@@ -259,11 +256,16 @@ const styles = StyleSheet.create({
   },
   metricColumn: {
     flex: 1,
-    marginRight: 10,
-    alignContent: "flex-end",
-    justifyContent: "flex-end",
+    marginRight: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '8%',
   },
   cameraColumn: {
     flex: 1,
+    width: '100%',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 });

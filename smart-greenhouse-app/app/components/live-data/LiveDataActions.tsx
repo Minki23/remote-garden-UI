@@ -1,12 +1,11 @@
 import React, { use, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Slider from '@react-native-community/slider';
+import { View, Text, StyleSheet, TouchableOpacity, PanResponder, Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const LiveDataActions = () => {
 
 const [lightSystem, setLightSystem] = React.useState(false);
-const [growHeater, setGrowHeater] = React.useState(0.5);
+const [growHeater, setGrowHeater] = React.useState(false);
 const [roofOpen, setRoof] = React.useState(false);
 
   return (
@@ -33,30 +32,35 @@ const [roofOpen, setRoof] = React.useState(false);
             <MaterialIcons name="play-arrow" size={24} color="#007BFF" />
           )}
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.actionCard}>
+      </View>      <View style={styles.actionCard}>
         <Text style={styles.actionTitle}>Heating</Text>
-        <Text style={styles.actionDescription}>Adjust the intensity of the heating system.</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          maximumValue={1}
-          minimumTrackTintColor="#007BFF"
-          maximumTrackTintColor="#ddd"
-          onSlidingComplete={(value) => {
-            setGrowHeater(Number(value.toFixed(2)));
+        <Text style={styles.actionDescription}>Manually toggle the heating system.</Text>
+        <TouchableOpacity style={styles.actionButton} onPress={() => {
+          setGrowHeater(!growHeater);
+          if (!growHeater) {
             fetch('http://localhost:3000/api/devices/1/heater/increase', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ amount: value }),
+              body: JSON.stringify({ amount: 1 })
             }).catch(console.error);
-          }}
-          value={growHeater}
-        />
-        <Text style={styles.sliderValue}>Level: {growHeater * 100}%</Text>
+          } else {
+            fetch('http://localhost:3000/api/devices/1/heater/decrease', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ amount: 1 })
+            }).catch(console.error);
+          }
+        }}>
+          {growHeater ? (
+            <MaterialIcons name="pause" size={24} color="#007BFF" />
+          ) : (
+            <MaterialIcons name="play-arrow" size={24} color="#007BFF" />
+          )}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.actionCard}>
@@ -117,21 +121,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
     marginBottom: 10,
-  },
-  actionButton: {
+  },  actionButton: {
     alignSelf: 'flex-end',
     padding: 10,
     backgroundColor: '#f0f8ff',
     borderRadius: 50,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  sliderValue: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 5,
   },
 });
 

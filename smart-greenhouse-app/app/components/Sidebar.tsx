@@ -26,10 +26,6 @@ export default function Sidebar({ closeDrawer }: { closeDrawer?: () => void }) {
         <MaterialIcons name="schedule" size={20} color="#007BFF" />
         <Text style={styles.link}>Scheduling</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.linkContainer} onPress={() => navigate('/notifications')}>
-        <MaterialIcons name="notifications" size={20} color="#007BFF" />
-        <Text style={styles.link}>Notifications</Text>
-      </TouchableOpacity>
       <TouchableOpacity style={styles.linkContainer} onPress={() => navigate('/history')}>
         <MaterialIcons name="history" size={20} color="#007BFF" />
         <Text style={styles.link}>History</Text>
@@ -72,6 +68,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRightWidth: 1,
     borderRightColor: '#ddd',
+    maxWidth: 300,
   },
   title: {
     fontSize: 26,
