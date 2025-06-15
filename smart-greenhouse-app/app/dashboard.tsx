@@ -69,16 +69,6 @@ export default function Dashboard() {
               return updated.length > 10 ? updated.slice(updated.length - 10) : updated;
             });
           }
-          if (data.device_type == "LIGHT") {
-            if (data.value > LightLevel) {
-              setLightTrend("Trend: up");
-            } else if (data.value < LightLevel) {
-              setLightTrend("Trend: down");
-            } else {
-              setLightTrend("Trend: stable");
-            }
-            setLightLevel(data.value);
-          }
         }
       };
       socket.onclose = () => console.log('WebSocket closed');
@@ -109,7 +99,6 @@ export default function Dashboard() {
             <View style={styles.column}>
               <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
               <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
-              <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
               <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
             </View>
             <View style={styles.section}>
@@ -138,7 +127,6 @@ export default function Dashboard() {
             <View style={styles.metricColumn}>
               <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
               <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
-              <MetricCard title="Light Level" value={`${LightLevel} Lux`} trend={light_trend} />
               <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
             </View>
             <View style={styles.cameraColumn}>
