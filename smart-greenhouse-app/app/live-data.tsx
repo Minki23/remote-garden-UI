@@ -31,7 +31,6 @@ const LiveData = () => {
       socket.onopen = () => console.log('WebSocket connected');
       socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
-        console.log('WebSocket message received:', data);
         if (data.event === 'new_reading') {
           if (data.device_type == "TEMPERATURE") {
             if (data.value > Temperature) {

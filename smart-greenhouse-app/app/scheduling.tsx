@@ -186,15 +186,16 @@ const Scheduling = () => {
   };
 
   const renderItem = ({ item }: { item: any }) => (
-    <View style={styles.card} key={item.task_id}>
-      <View style={styles.cardHeader}>
+    <View style={styles.card} key={item.task_id}>      <View style={styles.cardHeader}>
         <MaterialIcons name="event-note" size={24} color="#007BFF" />
         <View style={styles.cardInfo}>
           <Text style={styles.cardTitle}>{getActionDisplayName(item.args?.[1] || item.action || 'Unknown Action')}</Text>
           <Text style={styles.cardSubtitle}>{renderCron(item.cron)}</Text>
         </View>
         <Switch value={item.enabled} onValueChange={() => toggleSchedule(item.task_id)} />
-          <Pressable onPress={() => handleEdit(item)} style={styles.cardAction}>
+      </View>
+      <View style={styles.cardFooter}>
+        <Pressable onPress={() => handleEdit(item)} style={styles.cardAction}>
           <FontAwesome name="edit" size={18} color="#007BFF" />
           <Text style={styles.cardActionText}>Edit</Text>
         </Pressable>

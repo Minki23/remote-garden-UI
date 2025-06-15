@@ -29,13 +29,11 @@ export default function Dashboard() {
     (async () => {
       const token = await AsyncStorage.getItem('access_token');
       const wsUrl = `ws://${process.env.EXPO_PUBLIC_BACKEND_URL}/ws/wsinit?Authorization=Bearer ${token}`;
-      console.log('Connecting to WebSocket:', wsUrl);
       const socket = new WebSocket(wsUrl);
       setWs(socket);
       socket.onopen = () => console.log('WebSocket connected');
       socket.onmessage = (e) => {
         const data = JSON.parse(e.data);
-        console.log('WebSocket message received:', data);
         if (data.event === 'new_reading') {
           if (data.device_type == "TEMPERATURE") {
             if (data.value > Temperature) {
@@ -71,8 +69,6 @@ export default function Dashboard() {
           }
         }
       };
-      socket.onclose = () => console.log('WebSocket closed');
-      socket.onerror = (e) => console.error('WebSocket error', e);
     })();
   }, []);
 
@@ -128,9 +124,11 @@ export default function Dashboard() {
               <MetricCard title="Temperature" value={`${Temperature}°C`} trend={temp_trend} />
               <MetricCard title="Humidity" value={`${Humidity}% RH`} trend={humidity_trend} />
               <MetricCard title="System Status" value={"Good"} trend="Battery: 98%" />
-            </View>
-            <View style={styles.cameraColumn}>
-              <Text style={styles.sectionTitle}><MaterialIcons name="camera-alt" size={20} color="#007BFF" /> Live Camera Feed</Text>
+            </View>            <View style={styles.cameraColumn}>
+              <View style={styles.sectionTitleContainer}>
+                <MaterialIcons name="camera-alt" size={20} color="#007BFF" />
+                <Text style={styles.sectionTitle}>Live Camera Feed</Text>
+              </View>
               <CameraFeed />
             </View>
           </View>
@@ -211,14 +209,17 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: "center",
     alignItems: "center",
-  },
-  sectionTitle: {
+  },  sectionTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 15,
     color: "#007BFF",
+  },
+  sectionTitleContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 15,
+    gap: 8,
   },
   cameraFeed: {
     height: 300,
