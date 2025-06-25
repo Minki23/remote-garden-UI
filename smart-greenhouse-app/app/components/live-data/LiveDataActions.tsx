@@ -16,12 +16,12 @@ const [roofOpen, setRoof] = React.useState(false);
         <TouchableOpacity style={styles.actionButton} onPress={() => {
           setLightSystem(!lightSystem);
           if (!lightSystem) {
-            fetch('http://localhost:3000/api/devices/1/light/off', {
+            fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/1/light/off`, {
               method: 'POST'
             }).catch(console.error);
           }
           else {
-            fetch('http://localhost:3000/api/devices/1/light/on', {
+            fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/1/light/on`, {
               method: 'POST'
             }).catch(console.error);
           }
@@ -38,7 +38,7 @@ const [roofOpen, setRoof] = React.useState(false);
         <TouchableOpacity style={styles.actionButton} onPress={() => {
           setGrowHeater(!growHeater);
           if (!growHeater) {
-            fetch('http://localhost:3000/api/devices/1/heater/increase', {
+            fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/1/heater/increase`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ const [roofOpen, setRoof] = React.useState(false);
               body: JSON.stringify({ amount: 1 })
             }).catch(console.error);
           } else {
-            fetch('http://localhost:3000/api/devices/1/heater/decrease', {
+            fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/1/heater/decrease`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
@@ -69,11 +69,11 @@ const [roofOpen, setRoof] = React.useState(false);
         <TouchableOpacity style={styles.actionButton} onPress={() => {
             setRoof(!roofOpen);
             if (!roofOpen) {
-              fetch('http://localhost:3000/api/devices/1/roof/open', {
+              fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/1/roof/open`, {
                 method: 'POST'
               }).catch(console.error);
             } else {
-              fetch('http://localhost:3000/api/devices/1/roof/close', {
+              fetch(`http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/devices/1/roof/close`, {
                 method: 'POST'
               }).catch(console.error);
             }

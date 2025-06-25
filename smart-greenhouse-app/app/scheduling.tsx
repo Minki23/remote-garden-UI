@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Switch, Button, Modal, TextInput, Pressable, Platform, ScrollView, DrawerLayoutAndroid } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Sidebar } from './components/Sidebar';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
@@ -10,7 +9,6 @@ const API_BASE = `http://${process.env.EXPO_PUBLIC_BACKEND_URL}/api/schedules`;
 const Scheduling = () => {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [name, setName] = useState('');
   const [action, setAction] = useState<string>('START_WATERING');
   const [scheduleTime, setScheduleTime] = useState<Date>(new Date());
   const [selectedDays, setSelectedDays] = useState<number[]>([1, 2, 3, 4, 5, 6, 0]);
@@ -74,8 +72,8 @@ const Scheduling = () => {
     const token = await AsyncStorage.getItem('access_token');
     await fetch(`${API_BASE}/${id}/`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ cron: cronExpression }),
+      headers: { 'Content-Type': 'text/plain', Authorization: `Bearer ${token}` },
+      body: cronExpression ,
     });
     loadSchedules();
   };
@@ -229,7 +227,7 @@ const Scheduling = () => {
             
             <View style={styles.cardsContainer}>
               
-              <View style={styles.selectionCard}>
+              {!editingId && <View style={styles.selectionCard}>
                 <Text style={styles.cardLabel}>Action</Text>
                 <ScrollView 
                   style={styles.actionScrollContainer}
@@ -274,7 +272,7 @@ const Scheduling = () => {
                     {getActionDisplayName(action).replace(/[^\w\s]/gi, '').trim()}
                   </Text>
                 </View>
-              </View>
+              </View>}
 
               <View style={styles.selectionCard}>
                 <Text style={styles.cardLabel}>Time</Text>
@@ -426,7 +424,11 @@ const Scheduling = () => {
               </View>
             </View>
               <View style={styles.modalActions}>
-                <Pressable style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                <Pressable style={styles.cancelButton} onPress={() => {
+                  setModalVisible(false)
+                  setEditingId(null);
+                }
+                }>
                   <Text style={styles.cancelButtonText}>Cancel</Text>
                 </Pressable>
                 <Pressable style={styles.confirmButton} onPress={handleSubmit}>
@@ -744,10 +746,11 @@ const styles = StyleSheet.create({
   },
   
   quickSelectContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-around',
     marginBottom: 16,
     paddingHorizontal: 8,
+
   },
   quickSelectButton: {
     paddingVertical: 6,
@@ -756,6 +759,8 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    marginVertical: 4,
+    alignItems: 'center',
   },
   quickSelectText: {
     fontSize: 12,
